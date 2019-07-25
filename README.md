@@ -116,7 +116,7 @@ First, use corosync-cfgtool to check whether cluster communication is happy:
 Printing ring status.
 Local node ID 1
 RING ID 0
-        id      = 192.168.122.101
+        id      = 19.168.122.101
         status  = ring 0 active with no faults
 ```
 We can see here that everything appears normal with our fixed IP address (not a 127.0.0.x loopback address) listed as the id, and no faults for the status.
@@ -125,11 +125,11 @@ Next, check the membership and quorum APIs:
 ```bash
 [root@pcmk-1 ~]# corosync-cmapctl | grep members
 runtime.totem.pg.mrp.srp.members.1.config_version (u64) = 0
-runtime.totem.pg.mrp.srp.members.1.ip (str) = r(0) ip(192.168.122.101)
+runtime.totem.pg.mrp.srp.members.1.ip (str) = r(0) ip(19.168.122.101)
 runtime.totem.pg.mrp.srp.members.1.join_count (u32) = 1
 runtime.totem.pg.mrp.srp.members.1.status (str) = joined
 runtime.totem.pg.mrp.srp.members.2.config_version (u64) = 0
-runtime.totem.pg.mrp.srp.members.2.ip (str) = r(0) ip(192.168.122.102)
+runtime.totem.pg.mrp.srp.members.2.ip (str) = r(0) ip(19.168.122.102)
 runtime.totem.pg.mrp.srp.members.2.join_count (u32) = 1
 runtime.totem.pg.mrp.srp.members.2.status (str) = joined
 
@@ -277,13 +277,13 @@ With the new cluster option set, the configuration is now valid.
 The use of stonith-enabled=false is completely inappropriate for a production cluster. It tells the cluster to simply pretend that failed nodes are safely powered off. Some vendors will refuse to support clusters that have STONITH disabled. We disable STONITH here only to defer the discussion of its configuration, which can differ widely from one installation to the next. See [Section 8.1, “What is STONITH?”](https://clusterlabs.org/pacemaker/doc/en-US/Pacemaker/2.0/html/Clusters_from_Scratch/ch08.html#_what_is_stonith) for information on why STONITH is important and details on how to configure it.
 
 ## Add a Resource
-Our first resource will be a unique IP address that the cluster can bring up on either node. Regardless of where any cluster service(s) are running, end users need a consistent address to contact them on. Here, I will choose 192.168.122.120 as the floating address, give it the imaginative name ClusterIP and tell the cluster to check whether it is running every 30 seconds.
+Our first resource will be a unique IP address that the cluster can bring up on either node. Regardless of where any cluster service(s) are running, end users need a consistent address to contact them on. Here, I will choose 19.168.122.120 as the floating address, give it the imaginative name ClusterIP and tell the cluster to check whether it is running every 30 seconds.
 
 ### Warning
 The chosen address must not already be in use on the network. Do not reuse an IP address one of the nodes already has configured.
 ```bash
 [root@pcmk-1 ~]# pcs resource create ClusterIP ocf:heartbeat:IPaddr2 \
-    ip=192.168.122.120 cidr_netmask=24 op monitor interval=30s
+    ip=19.168.122.120 cidr_netmask=24 op monitor interval=30s
 ```
 
 Another important piece of information here is ocf:heartbeat:IPaddr2. This tells Pacemaker three things about the resource you want to add:
@@ -771,7 +771,7 @@ We will configure DRBD to use port 7789, so allow that port from each host to th
 
 ```bash
 [root@pcmk-1 ~]# firewall-cmd --permanent --add-rich-rule='rule family="ipv4" \
-    source address="192.168.122.102" port port="7789" protocol="tcp" accept'
+    source address="19.168.122.102" port port="7789" protocol="tcp" accept'
 success
 [root@pcmk-1 ~]# firewall-cmd --reload
 success
@@ -779,7 +779,7 @@ success
 
 ```bash
 [root@pcmk-2 ~]# firewall-cmd --permanent --add-rich-rule='rule family="ipv4" \
-    source address="192.168.122.101" port port="7789" protocol="tcp" accept'
+    source address="19.168.122.101" port port="7789" protocol="tcp" accept'
 success
 [root@pcmk-2 ~]# firewall-cmd --reload
 success
