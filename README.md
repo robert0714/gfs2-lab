@@ -56,6 +56,8 @@ Password:
 pcmk-2: Authorized
 pcmk-1: Authorized
 ```
+Next ,we have to modify /etc/hosts ( 127.0.0.1 pcmk-1)
+
 Next, use pcs cluster setup on the same node to generate and synchronize the corosync configuration:
 
 ```bash
